@@ -1,0 +1,53 @@
+@host = https://localhost:7080
+@apiKey = clt-dev-8D7C4F91A6E23B50D9F714C82A30E65B
+
+POST {{host}}/users
+X-API-KEY: {{apiKey}}
+Content-Type: application/json
+
+{
+  "name": "Juan",
+  "email": "juan@test.com",
+  "password": "SecurePass123"
+}
+
+###
+
+GET {{host}}/users?isActive=true
+X-API-KEY: {{apiKey}}
+
+###
+
+POST {{host}}/currencies
+X-API-KEY: {{apiKey}}
+Content-Type: application/json
+
+{
+  "code": "PYG",
+  "name": "Guarani paraguayo",
+  "rateToBase": 1
+}
+
+###
+
+POST {{host}}/currencies
+X-API-KEY: {{apiKey}}
+Content-Type: application/json
+
+{
+  "code": "USD",
+  "name": "Dolar estadounidense",
+  "rateToBase": 7300
+}
+
+###
+
+POST {{host}}/currency/convert
+X-API-KEY: {{apiKey}}
+Content-Type: application/json
+
+{
+  "fromCurrencyCode": "USD",
+  "toCurrencyCode": "PYG",
+  "amount": 100
+}
