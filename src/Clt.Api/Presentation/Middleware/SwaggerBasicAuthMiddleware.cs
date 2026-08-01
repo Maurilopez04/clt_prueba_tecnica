@@ -7,22 +7,14 @@ namespace Clt.Api.Presentation.Middleware;
 public sealed class SwaggerBasicAuthMiddleware
 {
     private readonly RequestDelegate next;
-    private readonly IHostEnvironment environment;
-    private readonly byte[]? expectedUsername;
-    private readonly byte[]? expectedPassword;
+    private readonly byte[] expectedUsername;
+    private readonly byte[] expectedPassword;
 
     public SwaggerBasicAuthMiddleware(
         RequestDelegate next,
-        IConfiguration configuration,
-        IHostEnvironment environment)
+        IConfiguration configuration)
     {
         this.next = next;
-        this.environment = environment;
-
-        if (environment.IsDevelopment())
-        {
-            return;
-        }
 
         var username = configuration["Swagger:Username"];
         var password = configuration["Swagger:Password"];
@@ -30,7 +22,7 @@ public sealed class SwaggerBasicAuthMiddleware
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             throw new InvalidOperationException(
-                "Swagger credentials are required outside the Development environment.");
+                "Swagger credentials are required.");
         }
 
         expectedUsername = Encoding.UTF8.GetBytes(username);
@@ -39,8 +31,7 @@ public sealed class SwaggerBasicAuthMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (environment.IsDevelopment()
-            || !context.Request.Path.StartsWithSegments("/swagger"))
+        if (!context.Request.Path.StartsWithSegments("/swagger"))
         {
             await next(context);
             return;
@@ -78,8 +69,8 @@ public sealed class SwaggerBasicAuthMiddleware
             var username = Encoding.UTF8.GetBytes(credentials[..separatorIndex]);
             var password = Encoding.UTF8.GetBytes(credentials[(separatorIndex + 1)..]);
 
-            return CryptographicOperations.FixedTimeEquals(expectedUsername!, username)
-                && CryptographicOperations.FixedTimeEquals(expectedPassword!, password);
+            return CryptographicOperations.FixedTimeEquals(expectedUsername, username)
+                && CryptographicOperations.FixedTimeEquals(expectedPassword, password);
         }
         catch (FormatException)
         {

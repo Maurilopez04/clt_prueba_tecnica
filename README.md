@@ -2,7 +2,7 @@
 
 API REST desarrollada con .NET 10, Minimal API, Entity Framework Core, SQLite, FluentValidation y CQRS.
 
-## Ejecución
+## Ejecución con .NET
 
 ```bash
 dotnet restore
@@ -13,6 +13,19 @@ dotnet run --project src/Clt.Api --launch-profile https
 - API: `https://localhost:7080`
 - Swagger: `https://localhost:7080/swagger`
 
+## Ejecución con Docker
+
+Requiere únicamente Docker:
+
+```bash
+docker compose up --build -d
+```
+
+- API: `http://localhost:8080`
+- Swagger: `http://localhost:8080/swagger`
+
+La base SQLite se conserva en el volumen `clt-data` al detener o reemplazar el contenedor.
+
 ## API Key
 
 Todos los endpoints requieren:
@@ -21,24 +34,29 @@ Todos los endpoints requieren:
 X-API-KEY: clt-dev-8D7C4F91A6E23B50D9F714C82A30E65B
 ```
 
-La clave está configurada en `appsettings.json` y puede reemplazarse mediante la variable de entorno `ApiKey`.
+La clave se configura en `src/Clt.Api/appsettings.json` para ambos modos de ejecución.
 
 ## Swagger
 
-En desarrollo, Swagger se puede abrir directamente. Fuera de `Development` requiere autenticación Basic con credenciales configuradas mediante variables de entorno:
+Swagger siempre requiere autenticación Basic:
 
 ```text
-Swagger__Username
-Swagger__Password
+Usuario: clt
+Contraseña: clt-docs-6A19F472C8D34E50B71F9A25D8036C4E
 ```
 
-Una vez dentro de Swagger, el botón `Authorize` permite ingresar la API Key para probar los endpoints.
+Una vez dentro, el botón `Authorize` permite ingresar la API Key para probar los endpoints.
 
 ## Base de datos
 
-SQLite se crea automáticamente al iniciar la aplicación. El archivo se guarda en `src/Clt.Api/clt.db`.
+SQLite se crea y actualiza automáticamente al iniciar la aplicación mediante migraciones de Entity Framework Core. El archivo se guarda en `src/Clt.Api/clt.db`.
 
-Para recrear el esquema, se debe detener la aplicación, eliminar `clt.db` y volver a iniciarla.
+Para crear una migración después de modificar el modelo:
+
+```bash
+dotnet tool restore
+dotnet ef migrations add NombreMigracion --project src/Clt.Api
+```
 
 ## Endpoints
 

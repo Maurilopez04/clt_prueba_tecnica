@@ -80,7 +80,12 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseHttpsRedirection();
+
+if (app.Configuration.GetValue("HttpsRedirection:Enabled", true))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 app.UseMiddleware<ApiKeyMiddleware>();
 app.UseSwagger();
@@ -93,7 +98,7 @@ app.MapCurrencyEndpoints();
 await using (var scope = app.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
+    await dbContext.Database.MigrateAsync();
 
     var seedCurrencies = new[]
     {
