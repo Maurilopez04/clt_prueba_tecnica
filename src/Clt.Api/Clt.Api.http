@@ -37,7 +37,7 @@ Content-Type: application/json
 {
   "code": "USD",
   "name": "Dolar estadounidense",
-  "rateToBase": 7300
+  "rateToBase": 6100
 }
 
 ###

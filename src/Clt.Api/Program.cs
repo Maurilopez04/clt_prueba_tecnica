@@ -103,7 +103,7 @@ await using (var scope = app.Services.CreateAsyncScope())
     var seedCurrencies = new[]
     {
         new Currency { Code = "PYG", Name = "Paraguayan Guaraní", RateToBase = 1m },
-        new Currency { Code = "USD", Name = "US Dollar", RateToBase = 7300m }
+        new Currency { Code = "USD", Name = "US Dollar", RateToBase = 6100m }
     };
 
     var seedCodes = seedCurrencies.Select(currency => currency.Code).ToArray();

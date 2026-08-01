@@ -28,7 +28,7 @@ public sealed class CreateUserHandler(AppDbContext dbContext, IPasswordHasher pa
             PasswordHash = command.Password is null
                 ? null
                 : passwordHasher.Hash(command.Password),
-            IsActive = true
+            IsActive = command.IsActive ?? true
         };
 
         dbContext.Users.Add(user);
